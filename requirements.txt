@@ -1,0 +1,40 @@
+# MVP Core de Autômatos
+
+## Estrutura de Diretórios Organizada
+```
+/jarvis-mvp
+│
+├── core
+│   ├── main.py
+│   ├── router.py
+│   ├── manager.py
+│   └── executor.py
+│
+├── automata
+│   ├── file_ops
+│   │   ├── config.json
+│   │   └── file_op.py
+│   │
+│   ├── script_runner
+│   │   ├── config.json
+│   │   └── script_runner.py
+│   │
+│   └── start_site
+│       ├── config.json
+│       ├── start_site.py
+│       └── Dockerfile (opcional)
+│
+├── static                  # assets da UI (HTML/CSS/JS)
+│   └── index.html
+│
+├── docs                    # documentação em Markdown
+│   └── ...
+│
+└── requirements.txt
+```
+
+### Descrição
+- **core/**: lógica central do Jarvis, servidor HTTP e roteamento.
+- **automata/**: cada subpasta é um autômato, com `config.json` e código isolado.
+- **static/**: UI web front‑end estática.
+- **docs/**: diagramas, especificações e user stories.

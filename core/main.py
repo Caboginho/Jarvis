@@ -1,6 +1,6 @@
-# core/main.py
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from core.router import CommandRouter
 from core.manager import AutomatonManager
 import uvicorn
@@ -9,46 +9,20 @@ app = FastAPI()
 manager = AutomatonManager()
 router = CommandRouter(manager)
 
+app.mount('/static', StaticFiles(directory='static'), name='static')
+
 @app.on_event("startup")
 def startup_event():
     manager.load_all()
 
 @app.get("/", response_class=HTMLResponse)
 async def index():
-    # Página simples para testar
-    return """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Jarvis Automata UI</title>
-    </head>
-    <body>
-        <h1>Jarvis Automata MVP</h1>
-        <button onclick="fetch('/automatons').then(r=>r.json()).then(data=>alert(JSON.stringify(data)))">Listar Autômatos</button>
-    </body>
-    </html>
-    """
+    with open('static/index.html') as f:
+        return f.read()
 
 @app.get("/automatons")
 def list_automatons():
     return manager.list_configs()
-
-@app.post("/register")
-def register_automaton(config: dict):
-    try:
-        automaton_id = manager.register(config)
-        return {"automatonId": automaton_id}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@app.delete("/automatons/{automaton_id}")
-def delete_automaton(automaton_id: str):
-    try:
-        manager.unregister(automaton_id)
-        return {}, 204
-    except KeyError:
-        raise HTTPException(status_code=404, detail="Automaton not found")
 
 @app.post("/run")
 def run_automaton(payload: dict):

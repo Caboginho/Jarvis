@@ -1,0 +1,8 @@
+{   
+   "automatonId": "file-op",
+  "name": "file_ops",
+  "description": "Lista arquivos e abre pasta",
+  "language": "python",
+  "entrypoint": "file_op.main",
+  "paramsSchema": { "type": "object", "properties": { "path": { "type": "string" } } }
+}

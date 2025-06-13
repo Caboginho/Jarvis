@@ -1,0 +1,16 @@
+{
+  "automatonId": "start-site",
+  "name": "start_site",
+  "description": "Inicializa site de vendas, backend e ngrok, aplicar máscara e gerar logs",
+  "language": "python",
+  "entrypoint": "start_site.main",
+  "paramsSchema": {
+    "type": "object",
+    "properties": {
+      "compose_path": { "type": "string", "description": "Diretório do docker-compose" },
+      "ngrok_token": { "type": "string", "description": "Token de autenticação do ngrok" },
+      "mask_domain": { "type": "string", "description": "Domínio ou CNAME para aplicar máscara" }
+    },
+    "required": ["compose_path", "ngrok_token", "mask_domain"]
+  }
+}

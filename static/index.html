@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Jarvis Automata UI</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    .automaton { margin-bottom: 1.5rem; padding: 1rem; border: 1px solid #ddd; }
+    .logs { background: #f4f4f4; padding: 1rem; height: 200px; overflow-y: scroll; white-space: pre-wrap; }
+    .params { margin: 0.5rem 0; }
+    .params input { margin-right: 0.5rem; }
+  </style>
+</head>
+<body>
+  <h1>Jarvis Automata</h1>
+  <div id="list"></div>
+  <script>
+    async function loadAutomatons() {
+      const res = await fetch('/automatons');
+      const data = await res.json();
+      const container = document.getElementById('list');
+      container.innerHTML = '';
+      data.forEach(auto => {
+        const div = document.createElement('div');
+        div.className = 'automaton';
+        let html = `<strong>${auto.name}</strong>: ${auto.description}<br>`;
+        if (auto.paramsSchema && auto.paramsSchema.properties) {
+          html += '<div class="params">';
+          Object.entries(auto.paramsSchema.properties).forEach(([key, prop]) => {
+            html += `<label>${key}: <input type="text" id="param-${auto.automatonId}-${key}" placeholder="${prop.description || ''}"></label>`;
+          });
+          html += '</div>';
+        }
+        html += `<button onclick="runAutomaton('${auto.automatonId}')">Run</button>`;
+        html += `<div id="logs-${auto.automatonId}" class="logs"></div>`;
+        div.innerHTML = html;
+        container.appendChild(div);
+      });
+    }
+
+    async function runAutomaton(id) {
+      // fetch automaton config properly
+      const resAuto = await fetch('/automatons');
+      const autos = await resAuto.json();
+      const auto = autos.find(a => a.automatonId === id);
+      let params = {};
+      if (auto.paramsSchema && auto.paramsSchema.properties) {
+        Object.keys(auto.paramsSchema.properties).forEach(key => {
+          const val = document.getElementById(`param-${id}-${key}`).value;
+          if (val) params[key] = val;
+        });
+      }
+      const res = await fetch('/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ automatonId: id, params })
+      });
+      const { taskId } = await res.json();
+      pollLogs(id, taskId);
+    }
+
+    async function pollLogs(id, taskId) {
+      const logDiv = document.getElementById(`logs-${id}`);
+      const res = await fetch(`/status?taskId=${taskId}`);
+      const status = await res.json();
+      logDiv.innerText = status.logs.join('');
+      if (status.status === 'running' || status.status === 'queued') {
+        setTimeout(() => pollLogs(id, taskId), 1000);
+      }
+    }
+
+    loadAutomatons();
+  </script>
+</body>
+</html>
