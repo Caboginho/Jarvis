@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from models import User, Product, Order, init_db
 
 app = FastAPI()
+
 init_db()
 
 class ProductIn(BaseModel):

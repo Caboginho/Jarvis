@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from core.routes import router as products_router
 from core.router import CommandRouter
 from core.manager import AutomatonManager
 import uvicorn
@@ -38,6 +39,9 @@ def get_status(taskId: str):
     if not status:
         raise HTTPException(status_code=404, detail="Task not found")
     return status
+
+
+app.include_router(products_router, prefix="/products", tags=["Products"])
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

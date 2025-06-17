@@ -15,3 +15,4 @@ class CommandRouter:
 
     def route_status(self, task_id: str):
         return self.executor.get_status(task_id)
+    
