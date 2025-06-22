@@ -1,3 +1,4 @@
+import os
 from sqlalchemy import create_engine, Column, Integer, String, Float, Text, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
@@ -31,7 +32,16 @@ class Product(Base):
         return prod
 
 # engine
-engine = create_engine('sqlite:///site.db', connect_args={'check_same_thread': False})
+MYSQL_USER = os.getenv('DB_USER', 'root')
+MYSQL_PASS = os.getenv('DB_PASS', '')
+MYSQL_HOST = os.getenv('DB_HOST', 'localhost')
+MYSQL_DB   = os.getenv('DB_NAME', 'jarvis')
+engine = create_engine(
+    f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASS}@{MYSQL_HOST}/{MYSQL_DB}',
+    echo=True
+)
+
+#engine = create_engine('sqlite:///site.db', connect_args={'check_same_thread': False})
 DBSession = sessionmaker(bind=engine)
 
 def init_db():

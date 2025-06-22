@@ -1,0 +1,49 @@
+1. Inicialize o Git no seu projeto local
+No terminal do VS Code (pressione Ctrl + ou vá em Terminal > Novo Terminal):
+
+git init
+Isso cria uma pasta oculta .git e começa a rastrear o projeto.
+
+2. Adicione os arquivos para o Git
+
+git add .
+Esse comando adiciona todos os arquivos ao controle de versão.
+
+3. Faça o primeiro commit
+
+git commit -m "Primeiro commit"
+4. Crie um repositório no GitHub
+Vá para https://github.com.
+
+Clique no botão "New repository".
+
+Dê um nome para o repositório (ex: meu-projeto).
+
+Escolha se será público ou privado.
+
+Não marque nenhuma opção de inicialização (README, .gitignore ou license), pois seu projeto local já existe.
+
+Clique em "Create repository".
+
+5. Conecte seu repositório local ao GitHub
+No terminal do VS Code, copie o comando que o GitHub fornece na tela após criar o repositório, que será semelhante a:
+
+
+git remote add origin https://github.com/seu-usuario/meu-projeto.git
+6. Envie o projeto para o GitHub
+
+git branch -M main
+git push -u origin main
+🎉 Pronto!
+Agora seu projeto está versionado e disponível no GitHub. Toda vez que você fizer alterações, basta:
+ 
+git add .
+git commit -m "Mensagem das mudanças"
+git push
+
+uvicorn core.main:app --reload
+Execute
+docker compose up -d
+Confirme que os containers estão rodando com:
+docker ps
+ngrok http 8000
