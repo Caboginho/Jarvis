@@ -68,8 +68,19 @@ def main(params_json=None):
             capture_output=True, text=True
         )
         logs.append(mask_proc.stdout or mask_proc.stderr)
-
-    # 7. Retorna todos os logs em JSON
+    # 6. Aplicar máscara via Cloudflare
+    logs.append(f"[Mask] Aplicando máscara {mask_domain} → {public_url}")
+    mask_cmd = [
+        "python", script_path, mask_domain, public_url,
+        params['cloudflare_token'], params['cloudflare_zone']
+    ]
+    mask_proc = subprocess.run(
+        mask_cmd,
+        cwd=os.path.dirname(script_path),
+        capture_output=True, text=True
+    )
+    logs.append(mask_proc.stdout or mask_proc.stderr)
+        # 7. Retorna todos os logs em JSON
     print(json.dumps(logs))
 
 if __name__ == "__main__":

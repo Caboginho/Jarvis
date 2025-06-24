@@ -2,7 +2,6 @@
 # Instruções para configurar o repositório no GitHub
 git branch -M main
 git push -u origin main
-🎉 Pronto!
 Agora seu projeto está versionado e disponível no GitHub. Toda vez que você fizer alterações, basta:
 git add .
 git commit -m "Mensagem das mudanças"
