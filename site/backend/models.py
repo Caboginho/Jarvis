@@ -1,23 +1,36 @@
 import os
-from sqlalchemy import create_engine, Column, Integer, String, Float, Text, ForeignKey, DateTime
+from sqlalchemy import (
+    create_engine, Column, Integer, String, Float,
+    Text, ForeignKey, DateTime
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 import datetime
 
+
+
 Base = declarative_base()
 
+# -------------------- User --------------------
 class User(Base):
     __tablename__ = 'users'
+    
     id = Column(Integer, primary_key=True)
-    username = Column(String, unique=True)
-    password_hash = Column(String)
+    username = Column(String, unique=True, nullable=False)
+    password_hash = Column(String, nullable=False)
+    
+    orders = relationship("Order", back_populates="user")
 
+# -------------------- Product --------------------
 class Product(Base):
     __tablename__ = 'products'
+    
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, nullable=False)
     description = Column(Text)
-    price = Column(Float)
+    price = Column(Float, nullable=False)
+
+    orders = relationship("Order", back_populates="product")
 
     @staticmethod
     def get_all():
@@ -28,20 +41,32 @@ class Product(Base):
     def create(data):
         session = DBSession()
         prod = Product(**data)
-        session.add(prod); session.commit()
+        session.add(prod)
+        session.commit()
         return prod
 
-# engine
-MYSQL_USER = os.getenv('DB_USER', 'root')
-MYSQL_PASS = os.getenv('DB_PASS', '')
-MYSQL_HOST = os.getenv('DB_HOST', 'localhost')
-MYSQL_DB   = os.getenv('DB_NAME', 'jarvis')
-engine = create_engine(
-    f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASS}@{MYSQL_HOST}/{MYSQL_DB}',
-    echo=True
-)
+# -------------------- Order --------------------
+class Order(Base):
+    __tablename__ = 'orders'
 
-#engine = create_engine('sqlite:///site.db', connect_args={'check_same_thread': False})
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    product_id = Column(Integer, ForeignKey('products.id'))
+    quantity = Column(Integer, default=1)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+    user = relationship("User", back_populates="orders")
+    product = relationship("Product", back_populates="orders")
+
+# -------------------- DB Engine / Session --------------------
+DB_USER = os.environ['DB_USER']
+DB_PASS = os.environ['DB_PASS']
+DB_HOST = os.environ['DB_HOST']
+DB_NAME = os.environ['DB_NAME']
+
+DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}"
+
+engine = create_engine(DATABASE_URL)
 DBSession = sessionmaker(bind=engine)
 
 def init_db():
