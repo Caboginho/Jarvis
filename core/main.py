@@ -1,9 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from core.routes import router as products_router
-from core.router import CommandRouter
-from core.manager import AutomatonManager
+from routes import router as products_router
+from router import CommandRouter
+from manager import AutomatonManager
 import uvicorn
 
 app = FastAPI()

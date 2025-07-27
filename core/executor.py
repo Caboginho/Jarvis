@@ -8,7 +8,7 @@ STATUS = {}
 
 class SandboxExecutor:
     def __init__(self):
-        from core.manager import AUTOMATA_ROOT
+        from manager import AUTOMATA_ROOT
         self.automata_root = AUTOMATA_ROOT
 
     def execute(self, automaton_id, config, params) -> str:
@@ -34,8 +34,9 @@ class SandboxExecutor:
 
         try:
             proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-            for line in proc.stdout:
-                STATUS[task_id]['logs'].append(line.strip())
+            if proc.stdout is not None:
+                for line in proc.stdout:
+                    STATUS[task_id]['logs'].append(line.strip())
             proc.wait()
             STATUS[task_id]['status'] = 'completed' if proc.returncode == 0 else 'failed'
         except Exception as e:

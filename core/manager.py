@@ -10,7 +10,7 @@ class AutomatonManager:
     def __init__(self):
         self.configs = {}  # automatonId -> config
 
-    def load_all(self):
+    def load_all(self): 
         os.makedirs(AUTOMATA_ROOT, exist_ok=True)
         for module in os.listdir(AUTOMATA_ROOT):
             module_dir = os.path.join(AUTOMATA_ROOT, module)
